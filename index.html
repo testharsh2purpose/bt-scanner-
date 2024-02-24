@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bluetooth Scanner</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+</head>
+<body>
+  <button id="requestDeviceButton">Scan for Device (requestDevice)</button>
+  <button id="requestLEScanButton">Scan for Devices (requestLEScan)</button>
+  <div id="results"></div>
+  <script>
+    $(document).ready(function() {
+    $('#requestDeviceButton').click(function() {
+      navigator.bluetooth.requestDevice({
+        acceptAllDevices: true
+      })
+      .then(device => {
+        $('#results').text(`Selected device: ${device.name} (ID: ${device.id})`);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        $('#results').text('Failed to scan for devices.');
+      });
+    });
+
+    $('#requestLEScanButton').click(function() {
+      navigator.bluetooth.requestLEScan({
+        acceptAllAdvertisements: true
+      })
+      .then(function(result) {
+        let devices = [];
+        result.onsuccess = function(event) {
+          let device = event.target.value;
+          devices.push(`${device.name} (ID: ${device.id})`);
+          $('#results').text(`Devices found: ${devices.join(', ')}`);
+        };
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        $('#results').text('Failed to scan for devices.');
+      });
+    });
+  });
+
+  </script>
+</body>
+</html>
